@@ -1,0 +1,26 @@
+<div class="interview-container">
+  <!-- Header -->
+   <app-interview-header
+      [jobTitle]="currentJobTitle"
+      [companyName]="currentCompanyName">
+    </app-interview-header>
+
+  <!-- Conversation -->
+  <!-- Conversation -->
+<app-conversation
+  [messages]="conversation"
+  [isWaitingResponse]="isWaitingResponse">
+</app-conversation>
+
+
+  <!-- Controls -->
+  
+  <app-audio-controls 
+  [isRecording]="isRecording"
+  [interviewStarted]="interviewStarted"
+  [isInterviewComplete]="currentQuestionIndex >= questions.length"
+  [isWaitingResponse]="isWaitingResponse"
+  (toggleRecording)="toggleRecording()"
+  (startInterview)="startInterview()">
+</app-audio-controls>
+</div>

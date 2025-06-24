@@ -1,0 +1,21 @@
+<div class="controls">
+  <div *ngIf="!interviewStarted" class="start-section">
+    <button mat-raised-button color="primary" (click)="startInterview.emit()">
+      Commencer l'entretien
+    </button>
+  </div>
+
+  <div *ngIf="interviewStarted && !isInterviewComplete" class="recording-section">
+    <button mat-fab color="warn" 
+            (click)="toggleRecording.emit()" 
+            [disabled]="isWaitingResponse">
+      <mat-icon *ngIf="!isRecording">mic</mat-icon>
+      <mat-icon *ngIf="isRecording">stop</mat-icon>
+    </button>
+    <p>{{ isRecording ? 'Enregistrement en cours...' : 'Appuyez pour enregistrer' }}</p>
+  </div>
+
+  <div *ngIf="isInterviewComplete" class="end-section">
+    <p>L'entretien est terminé. Merci !</p>
+  </div>
+</div>

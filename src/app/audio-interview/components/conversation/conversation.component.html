@@ -1,0 +1,13 @@
+<div class="conversation-container">
+  <app-message-bubble 
+    *ngFor="let message of messages" 
+    [message]="message"
+    (playAudio)="handlePlayAudio($event)">
+  </app-message-bubble>
+
+  <div *ngIf="isWaitingResponse" class="typing-indicator">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
