@@ -1,13 +1,13 @@
 <div class="controls">
   <div *ngIf="!interviewStarted" class="start-section">
-    <button mat-raised-button color="primary" (click)="startInterview.emit()">
+    <button mat-raised-button color="primary" class="white-text-button" (click)="startInterview.emit()">
       Commencer l'entretien
     </button>
   </div>
 
   <div *ngIf="interviewStarted && !isInterviewComplete" class="recording-section">
-    <button mat-fab color="warn" 
-            (click)="toggleRecording.emit()" 
+    <button mat-fab class="blue-record-button" 
+            (click)="onToggleRecording()" 
             [disabled]="isWaitingResponse">
       <mat-icon *ngIf="!isRecording">mic</mat-icon>
       <mat-icon *ngIf="isRecording">stop</mat-icon>

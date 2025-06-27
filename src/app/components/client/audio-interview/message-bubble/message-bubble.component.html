@@ -1,0 +1,29 @@
+<div class="message" [ngClass]="{
+  'bot-message': message.sender === 'bot',
+  'user-message': message.sender === 'user'
+}">
+<div class="message-header">
+    <span class="sender-label">
+      {{message.sender === 'bot' ? 'Bot' : 'Vous'}}
+    </span>
+    <span class="timestamp">
+      {{message.timestamp | date:'HH:mm'}}
+    </span>
+  </div>
+  <div class="message-content">
+    <p>{{message.content}}</p>
+    <div *ngIf="message.audioUrl" class="audio-player" [class.is-playing]="isPlaying">
+      
+      <button mat-icon-button (click)="togglePlay()" class="play-button">
+        <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+      
+       <div class="progress-container"  (click)="seekAudio($event)" >
+        <div class="progress-bar" [style.width.%]="progress"></div>
+      </div>
+      <span class="time-display">
+        {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+      </span>
+    </div>
+  </div>
+</div>

@@ -1,17 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import AudioRecorderService from '../services/audio-recorder.service'; 
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ClientImports } from '../client-imports';
+import { ConversationComponent } from './conversation/conversation.component';
+import { AudioControlsComponent } from './audio-controls/audio-controls.component';
+import AudioRecorderService from '../../../core/services/audio-recorder.service';
+import { InterviewHeaderComponent } from './interview-header/interview-header.component';
 
 export interface InterviewMessage {
   sender: 'bot' | 'user';
   content: string;
   audioUrl?: string | null;
   isQuestion?: boolean;
+  timestamp: Date; 
 }
 
 @Component({
   selector: 'app-audio-interview',
+  standalone: true,
   templateUrl: './audio-interview.component.html',
-  styleUrls: ['./audio-interview.component.css']
+  styleUrls: ['./audio-interview.component.css'],
+  imports: [
+    ...ClientImports,
+    ConversationComponent,
+    AudioControlsComponent,
+    InterviewHeaderComponent
+  ]
 })
 export class AudioInterviewComponent implements OnInit {
   isRecording = false;
@@ -23,6 +35,12 @@ export class AudioInterviewComponent implements OnInit {
   currentCompanyName = 'Facebook';
   interviewPhase: 'welcome' | 'confirmation' | 'questions' | 'finished' = 'welcome';
   currentQuestionIndex = 0;
+  isCurrentlyRecording = false;
+
+onRecordingStateChanged(isRecording: boolean) {
+  this.isCurrentlyRecording = isRecording;
+  this.cdRef.detectChanges();
+}
   
   questions = [
     "Pourriez-vous vous présenter brièvement ?",
@@ -31,7 +49,7 @@ export class AudioInterviewComponent implements OnInit {
     "Pouvez-vous décrire une situation professionnelle difficile et comment vous l'avez gérée ?"
   ];
 
-  constructor(private audioRecorder: AudioRecorderService) {}
+  constructor(private audioRecorder: AudioRecorderService,private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.showWelcomeMessage();
@@ -78,8 +96,9 @@ export class AudioInterviewComponent implements OnInit {
     
     this.conversation.push({
       sender: 'user',
-      content: 'Candidat',
-      audioUrl: this.audioUrl
+      content:'',
+      audioUrl: this.audioUrl,
+      timestamp: new Date()
     });
   }
 
@@ -89,7 +108,8 @@ export class AudioInterviewComponent implements OnInit {
     this.conversation.push({
       sender: 'bot',
       content,
-      isQuestion
+      isQuestion,
+       timestamp: new Date()
     });
     this.isWaitingResponse = false;
   }
@@ -98,7 +118,8 @@ export class AudioInterviewComponent implements OnInit {
     this.conversation.push({
       sender: 'bot',
       content,
-      isQuestion
+      isQuestion,
+       timestamp: new Date()
     });
   }
 
@@ -106,16 +127,15 @@ export class AudioInterviewComponent implements OnInit {
     
     this.addUserMessage();
     
-    // 2. Petite pause avant de continuer
-    await this.delay(500); // 1.5 seconde de pause
 
+    await this.delay(500); 
     switch (this.interviewPhase) {
       case 'confirmation':
         this.startInterview();
         break;
         
       case 'questions':
-        await this.moveToNextQuestion(); // Attendre le traitement
+        await this.moveToNextQuestion(); 
         break;
     }
   }
@@ -130,7 +150,7 @@ export class AudioInterviewComponent implements OnInit {
       this.addBotMessage(this.questions[this.currentQuestionIndex], true);
     } else {
       
-      this.addBotMessage("Merci, l'entretien est terminé !");
+      
       this.interviewPhase = 'finished';
     }
   }

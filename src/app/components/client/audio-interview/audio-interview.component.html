@@ -9,7 +9,7 @@
   <!-- Conversation -->
 <app-conversation
   [messages]="conversation"
-  [isWaitingResponse]="isWaitingResponse">
+  [isCurrentlyRecording]="isCurrentlyRecording">
 </app-conversation>
 
 
@@ -18,9 +18,10 @@
   <app-audio-controls 
   [isRecording]="isRecording"
   [interviewStarted]="interviewStarted"
-  [isInterviewComplete]="currentQuestionIndex >= questions.length"
+  [isInterviewComplete]="interviewPhase === 'finished'"
   [isWaitingResponse]="isWaitingResponse"
   (toggleRecording)="toggleRecording()"
-  (startInterview)="startInterview()">
+  (startInterview)="startInterview()"
+   (recordingStateChanged)="onRecordingStateChanged($event)">
 </app-audio-controls>
 </div>

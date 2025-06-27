@@ -35,3 +35,18 @@ button[mat-fab] {
   color: #4caf50;
   font-weight: 500;
 }
+.blue-record-button {
+  background-color: #1976d2 !important; /* Bleu Material standard */
+}
+
+.blue-record-button:disabled {
+  background-color: #b0bec5 !important; /* Gris quand désactivé */
+}
+.white-text-button {
+  color: white !important;
+}
+
+/* Si vous voulez un bleu spécifique (optionnel) */
+.white-text-button.mat-primary {
+  background-color: #1976d2; /* Bleu Material standard */
+}
