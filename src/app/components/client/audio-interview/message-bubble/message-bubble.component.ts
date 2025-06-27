@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { ClientImports } from '../../client-imports';
+import AudioRecorderService from '../../../../core/services/audio-recorder.service';
 
 @Component({
   selector: 'app-message-bubble',
@@ -21,15 +22,18 @@ export class MessageBubbleComponent implements OnDestroy {
   @Input() message!: InterviewMessage;
   @Output() playAudio = new EventEmitter<string>();
   @Input() isRecording = false;
+  
   isPlaying = false;
   progress = 0;
   duration = 0;
   currentTime = 0;
   private audio: HTMLAudioElement | null = null;
   private progressInterval: any;
-  private static currentlyPlaying: MessageBubbleComponent | null = null; // Static pour suivre l'instance en cours
+  private static currentlyPlaying: MessageBubbleComponent | null = null; 
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+  private audioRecorder: AudioRecorderService) {
     if (isPlatformBrowser(this.platformId)) {
       this.audio = new Audio();
       this.audio.onloadedmetadata = () => {
@@ -39,20 +43,20 @@ export class MessageBubbleComponent implements OnDestroy {
       };
     }
   }
-
- togglePlay() {
-  if (this.isRecording) return; // Ne rien faire si enregistrement en cours
-  
-  if (this.isPlaying) {
-    this.pause();
-  } else {
-    if (MessageBubbleComponent.currentlyPlaying && 
-        MessageBubbleComponent.currentlyPlaying !== this) {
-      MessageBubbleComponent.currentlyPlaying.pause();
+  togglePlay() {
+    if (this.isRecording) return;
+    
+    if (this.isPlaying) {
+      this.pause();
+    } else {
+      this.audioRecorder.notifyAudioPlaybackStarted();
+      if (MessageBubbleComponent.currentlyPlaying && 
+          MessageBubbleComponent.currentlyPlaying !== this) {
+        MessageBubbleComponent.currentlyPlaying.pause();
+      }
+      this.play();
     }
-    this.play();
   }
-}
 
   play(): void {
     if (!this.audio || !this.message.audioUrl) return;
@@ -63,7 +67,7 @@ export class MessageBubbleComponent implements OnDestroy {
     
     this.audio.play().then(() => {
       this.isPlaying = true;
-      MessageBubbleComponent.currentlyPlaying = this; // Enregistre cette instance comme celle en cours
+      MessageBubbleComponent.currentlyPlaying = this;
       this.startProgressTracking();
     }).catch(error => {
       console.error('Erreur de lecture:', error);
@@ -89,7 +93,8 @@ export class MessageBubbleComponent implements OnDestroy {
     if (!this.audio) return;
     this.audio.pause();
     this.isPlaying = false;
-    // Si c'est cet audio qui était en cours, efface la référence
+    this.audioRecorder.notifyAudioPlaybackStopped();
+    
     if (MessageBubbleComponent.currentlyPlaying === this) {
       MessageBubbleComponent.currentlyPlaying = null;
     }
@@ -135,7 +140,7 @@ export class MessageBubbleComponent implements OnDestroy {
     this.progress = seekPercentage * 100;
 
     if (!this.isPlaying) {
-      // Arrête tout autre audio en cours avant de jouer celui-ci
+     
       if (MessageBubbleComponent.currentlyPlaying && 
           MessageBubbleComponent.currentlyPlaying !== this) {
         MessageBubbleComponent.currentlyPlaying.pause();

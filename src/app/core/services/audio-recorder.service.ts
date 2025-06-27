@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,9 @@ export class AudioRecorderService {
   private audioChunks: Blob[] = [];
   public recording$ = new Subject<boolean>();
   public audioBlob$ = new Subject<Blob>();
-
+    private isAudioPlaying = new BehaviorSubject<boolean>(false);
   async startRecording() {
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.mediaRecorder = new MediaRecorder(stream);
@@ -38,6 +39,21 @@ export class AudioRecorderService {
       this.mediaRecorder.stop();
       this.recording$.next(false); 
     }
+  }  // Méthodes pour gérer l'état audio
+  notifyAudioPlaybackStarted() {
+    if (this.mediaRecorder?.state === 'recording') {
+      this.stopRecording();
+    }
+    this.isAudioPlaying.next(true);
   }
+
+  notifyAudioPlaybackStopped() {
+    this.isAudioPlaying.next(false);
+  }
+
+  getAudioPlayingState() {
+    return this.isAudioPlaying.asObservable();
+  }
+
 }
 export default AudioRecorderService;

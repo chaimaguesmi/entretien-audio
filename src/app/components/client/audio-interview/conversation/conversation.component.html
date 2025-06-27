@@ -1,7 +1,8 @@
-<div class="conversation-container">
+<div class="conversation-container" #conversationContainer (scroll)="onScroll()">
   <app-message-bubble 
     *ngFor="let message of messages" 
     [message]="message"
+    [isRecording]="isCurrentlyRecording"
     (playAudio)="handlePlayAudio($event)">
   </app-message-bubble>
 

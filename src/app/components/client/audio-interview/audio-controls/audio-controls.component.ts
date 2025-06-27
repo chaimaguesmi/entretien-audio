@@ -19,7 +19,7 @@ export class AudioControlsComponent {
   @Input() interviewStarted = false;
   @Input() isInterviewComplete = false;
   @Input() isWaitingResponse = false;
-  
+   @Input() isAudioPlaying = false;
   @Output() toggleRecording = new EventEmitter<void>();
   @Output() startInterview = new EventEmitter<void>();
   @Output() recordingStateChanged = new EventEmitter<boolean>(); 

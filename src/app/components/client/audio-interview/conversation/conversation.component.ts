@@ -17,18 +17,19 @@ export class ConversationComponent implements AfterViewChecked {
   @Output() playAudio = new EventEmitter<string>();
   
   @ViewChild('conversationContainer') private container!: ElementRef;
-  private shouldScroll = true;
+  private scrollThreshold = 100; 
+  private isNearBottom = true;
 
   ngAfterViewChecked() {
-    if (this.shouldScroll) {
+    if (this.isNearBottom) {
       this.scrollToBottom();
     }
   }
 
   private scrollToBottom(): void {
     try {
-      // Correction de la méthode scroll
-      this.container.nativeElement.scrollTop = this.container.nativeElement.scrollHeight;
+      const element = this.container.nativeElement;
+      element.scrollTop = element.scrollHeight;
     } catch (err) {
       console.error('Scroll error:', err);
     }
@@ -36,8 +37,8 @@ export class ConversationComponent implements AfterViewChecked {
 
   onScroll() {
     const element = this.container.nativeElement;
-    const atBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 1;
-    this.shouldScroll = atBottom;
+    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    this.isNearBottom = distanceFromBottom < this.scrollThreshold;
   }
 
   handlePlayAudio(audioUrl: string) {

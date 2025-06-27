@@ -34,7 +34,9 @@ export class InterviewHeaderComponent {
     this._companyName = value;
     this.companyNameChange.emit(value);
   }
-
+    @Input() progress: number = 0;
+  @Input() currentQuestionIndex: number = 0;
+  @Input() totalQuestions: number = 0;
   @Output() jobTitleChange = new EventEmitter<string>();
   @Output() companyNameChange = new EventEmitter<string>();
 }

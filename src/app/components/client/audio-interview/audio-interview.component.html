@@ -1,15 +1,20 @@
 <div class="interview-container">
   <!-- Header -->
-   <app-interview-header
-      [jobTitle]="currentJobTitle"
-      [companyName]="currentCompanyName">
-    </app-interview-header>
+    <app-interview-header
+  [jobTitle]="currentJobTitle"
+  [companyName]="currentCompanyName"
+  [progress]="completionPercentage"
+  [currentQuestionIndex]="currentQuestionIndex"
+  [totalQuestions]="questions.length">
+</app-interview-header>
 
-  <!-- Conversation -->
-  <!-- Conversation -->
+
+<!-- Conversation -->
 <app-conversation
   [messages]="conversation"
-  [isCurrentlyRecording]="isCurrentlyRecording">
+  [isWaitingResponse]="isWaitingResponse"
+  [isCurrentlyRecording]="isCurrentlyRecording"
+  >
 </app-conversation>
 
 
@@ -20,6 +25,7 @@
   [interviewStarted]="interviewStarted"
   [isInterviewComplete]="interviewPhase === 'finished'"
   [isWaitingResponse]="isWaitingResponse"
+  [isAudioPlaying]="isAudioPlaying"
   (toggleRecording)="toggleRecording()"
   (startInterview)="startInterview()"
    (recordingStateChanged)="onRecordingStateChanged($event)">

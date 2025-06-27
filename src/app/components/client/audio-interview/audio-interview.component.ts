@@ -36,11 +36,9 @@ export class AudioInterviewComponent implements OnInit {
   interviewPhase: 'welcome' | 'confirmation' | 'questions' | 'finished' = 'welcome';
   currentQuestionIndex = 0;
   isCurrentlyRecording = false;
+   isAudioPlaying = false;
 
-onRecordingStateChanged(isRecording: boolean) {
-  this.isCurrentlyRecording = isRecording;
-  this.cdRef.detectChanges();
-}
+
   
   questions = [
     "Pourriez-vous vous présenter brièvement ?",
@@ -49,13 +47,24 @@ onRecordingStateChanged(isRecording: boolean) {
     "Pouvez-vous décrire une situation professionnelle difficile et comment vous l'avez gérée ?"
   ];
 
-  constructor(private audioRecorder: AudioRecorderService,private cdRef: ChangeDetectorRef) {}
-
+  constructor(
+    private audioRecorder: AudioRecorderService,private cdRef: ChangeDetectorRef
+  ) {}
+ onRecordingStateChanged(isRecording: boolean) {
+  this.isCurrentlyRecording = isRecording;
+  this.cdRef.detectChanges();
+}
   ngOnInit() {
     this.showWelcomeMessage();
     this.setupAudioRecorder();
+    this.setupAudioPlaybackListener();
   }
-
+   private setupAudioPlaybackListener() {
+    this.audioRecorder.getAudioPlayingState().subscribe(isPlaying => {
+      this.isAudioPlaying = isPlaying;
+      this.cdRef.detectChanges();
+    });
+  }
   private setupAudioRecorder() {
     this.audioRecorder.recording$.subscribe(recording => {
       this.isRecording = recording;
@@ -83,14 +92,20 @@ onRecordingStateChanged(isRecording: boolean) {
     this.addBotMessage(this.questions[0], true);
   }
 
+  
   toggleRecording() {
     if (this.isRecording) {
       this.audioRecorder.stopRecording();
     } else {
+      if (this.isAudioPlaying) {
+      
+        return;
+      }
       this.audioRecorder.startRecording();
     }
   }
 
+ 
   private addUserMessage() {
     if (!this.audioUrl) return;
     
@@ -159,7 +174,15 @@ onRecordingStateChanged(isRecording: boolean) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
- 
+ // Calcul du pourcentage de complétion
+get completionPercentage(): number {
+  return (this.currentQuestionIndex / this.questions.length) * 100;
+}
+
+// Nombre de questions restantes
+get remainingQuestions(): number {
+  return this.questions.length - this.currentQuestionIndex;
+}
 
 
 }

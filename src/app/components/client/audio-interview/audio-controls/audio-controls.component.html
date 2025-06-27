@@ -8,7 +8,7 @@
   <div *ngIf="interviewStarted && !isInterviewComplete" class="recording-section">
     <button mat-fab class="blue-record-button" 
             (click)="onToggleRecording()" 
-            [disabled]="isWaitingResponse">
+            [disabled]="isAudioPlaying || isWaitingResponse">
       <mat-icon *ngIf="!isRecording">mic</mat-icon>
       <mat-icon *ngIf="isRecording">stop</mat-icon>
     </button>
