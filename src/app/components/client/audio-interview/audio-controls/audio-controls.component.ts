@@ -23,7 +23,7 @@ export class AudioControlsComponent {
   @Output() toggleRecording = new EventEmitter<void>();
   @Output() startInterview = new EventEmitter<void>();
   @Output() recordingStateChanged = new EventEmitter<boolean>(); 
-
+ 
   onToggleRecording() {
     this.toggleRecording.emit();
     this.recordingStateChanged.emit(!this.isRecording); 

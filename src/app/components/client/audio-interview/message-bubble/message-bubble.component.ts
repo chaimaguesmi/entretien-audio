@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, Output, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, PLATFORM_ID } from '@angular/core';
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { InterviewMessage } from '../audio-interview.component';
@@ -18,7 +18,7 @@ import AudioRecorderService from '../../../../core/services/audio-recorder.servi
   imports: [CommonModule, MatIconModule
     ]
 })
-export class MessageBubbleComponent implements OnDestroy {
+export class MessageBubbleComponent implements OnDestroy,OnInit {
   @Input() message!: InterviewMessage;
   @Output() playAudio = new EventEmitter<string>();
   @Input() isRecording = false;
@@ -27,13 +27,14 @@ export class MessageBubbleComponent implements OnDestroy {
   progress = 0;
   duration = 0;
   currentTime = 0;
+   durationLoaded = false; 
   private audio: HTMLAudioElement | null = null;
   private progressInterval: any;
   private static currentlyPlaying: MessageBubbleComponent | null = null; 
-
+  
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-  private audioRecorder: AudioRecorderService) {
+  private audioRecorder: AudioRecorderService, private cdRef: ChangeDetectorRef) {
     if (isPlatformBrowser(this.platformId)) {
       this.audio = new Audio();
       this.audio.onloadedmetadata = () => {
@@ -41,6 +42,7 @@ export class MessageBubbleComponent implements OnDestroy {
           this.duration = this.audio.duration;
         }
       };
+      
     }
   }
   togglePlay() {
@@ -48,10 +50,12 @@ export class MessageBubbleComponent implements OnDestroy {
     
     if (this.isPlaying) {
       this.pause();
+      
     } else {
       this.audioRecorder.notifyAudioPlaybackStarted();
       if (MessageBubbleComponent.currentlyPlaying && 
           MessageBubbleComponent.currentlyPlaying !== this) {
+             MessageBubbleComponent.currentlyPlaying.reset(); 
         MessageBubbleComponent.currentlyPlaying.pause();
       }
       this.play();
@@ -84,9 +88,16 @@ export class MessageBubbleComponent implements OnDestroy {
         
         if (this.audio.ended) {
           this.reset();
+          this.audioRecorder.notifyAudioPlaybackStopped(); 
         }
       }
     }, 100);
+     if (this.audio) {
+    this.audio.onended = () => {
+      this.reset();
+      this.audioRecorder.notifyAudioPlaybackStopped();
+    };
+  }
   }
 
   pause(): void {
@@ -109,13 +120,18 @@ export class MessageBubbleComponent implements OnDestroy {
   }
 
   private reset(): void {
+     if (!this.audio) return;
     this.stopProgressTracking();
     this.isPlaying = false;
+    
     this.progress = 0;
     this.currentTime = 0;
     if (MessageBubbleComponent.currentlyPlaying === this) {
       MessageBubbleComponent.currentlyPlaying = null;
     }
+if (this.audio) {
+    this.audio.onended = null;
+  }
   }
 
   formatTime(seconds: number): string {
@@ -157,10 +173,47 @@ export class MessageBubbleComponent implements OnDestroy {
     if (this.audio) {
       this.audio.pause();
       this.audio.src = '';
+       this.audio.onended = null; 
     }
     if (MessageBubbleComponent.currentlyPlaying === this) {
       MessageBubbleComponent.currentlyPlaying = null;
     }
     this.stopProgressTracking();
   }
+  ngOnInit() {
+    if (this.message.audioUrl) {
+      this.loadAudioDuration();
+    }
+  }
+  
+private loadAudioDuration() {
+  if (!this.audio || !this.message.audioUrl) return;
+  
+  // Sauvegarde l'état actuel
+  const wasPlaying = this.isPlaying;
+  const currentTime = this.audio.currentTime;
+  
+  if (wasPlaying) {
+    this.audio.pause();
+  }
+  
+  this.audio.src = this.message.audioUrl;
+  this.audio.currentTime = 0;
+  
+  this.audio.onloadedmetadata = () => {
+    this.duration = this.audio!.duration;
+    this.durationLoaded = true;
+    this.cdRef.detectChanges();
+    
+    // Restaure l'état précédent
+    if (wasPlaying) {
+      this.audio!.src = this.message.audioUrl!;
+      this.audio!.currentTime = currentTime;
+      this.audio!.play();
+    }
+  };
+  
+  this.audio.load();
+}
+
 }

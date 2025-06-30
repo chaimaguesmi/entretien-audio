@@ -1,33 +1,25 @@
 <div class="interview-container">
-  <!-- Header -->
-    <app-interview-header
-  [jobTitle]="currentJobTitle"
-  [companyName]="currentCompanyName"
-  [progress]="completionPercentage"
-  [currentQuestionIndex]="currentQuestionIndex"
-  [totalQuestions]="questions.length">
-</app-interview-header>
+  <app-interview-header
+    [jobTitle]="currentJobTitle"
+    [companyName]="currentCompanyName"
+    [currentQuestion]="currentQuestionIndex"
+    [totalQuestions]="questions.length">
+  </app-interview-header>
 
+  <app-conversation
+    [messages]="conversation"
+    [isWaitingResponse]="isWaitingResponse"
+    [isCurrentlyRecording]="isCurrentlyRecording">
+  </app-conversation>
 
-<!-- Conversation -->
-<app-conversation
-  [messages]="conversation"
-  [isWaitingResponse]="isWaitingResponse"
-  [isCurrentlyRecording]="isCurrentlyRecording"
-  >
-</app-conversation>
-
-
-  <!-- Controls -->
-  
   <app-audio-controls 
-  [isRecording]="isRecording"
-  [interviewStarted]="interviewStarted"
-  [isInterviewComplete]="interviewPhase === 'finished'"
-  [isWaitingResponse]="isWaitingResponse"
-  [isAudioPlaying]="isAudioPlaying"
-  (toggleRecording)="toggleRecording()"
-  (startInterview)="startInterview()"
-   (recordingStateChanged)="onRecordingStateChanged($event)">
-</app-audio-controls>
+    [isRecording]="isRecording"
+    [interviewStarted]="interviewStarted"
+    [isInterviewComplete]="interviewPhase === 'finished'"
+    [isWaitingResponse]="isWaitingResponse"
+    [isAudioPlaying]="isAudioPlaying"
+    (toggleRecording)="toggleRecording()"
+    (startInterview)="startInterview()"
+    (recordingStateChanged)="onRecordingStateChanged($event)">
+  </app-audio-controls>
 </div>

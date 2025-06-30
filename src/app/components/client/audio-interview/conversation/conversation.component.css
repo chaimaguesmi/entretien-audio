@@ -1,13 +1,13 @@
 .conversation-container {
   background-color: #f5f5f5;
-  border-radius: 10px;
+  border-radius: 0;
   padding: 20px;
-  min-height: auto;
-  max-height: 500px;
+  flex-grow: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  min-height: 0; /* Important pour le flex-grow */
 }
 
 /* Animation typing indicator */

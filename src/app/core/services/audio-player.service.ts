@@ -9,12 +9,9 @@ export class AudioPlayerService {
   public audioPaused$ = new Subject<string>();
 
   play(audioUrl: string): void {
-    // Arrêter tout audio précédent
     if (this.currentAudio) {
       this.stopCurrentAudio();
     }
-
-    // Démarrer le nouvel audio
     this.currentAudio = new Audio(audioUrl);
     this.currentAudioUrl = audioUrl;
 
@@ -41,9 +38,13 @@ export class AudioPlayerService {
       const stoppedUrl = this.currentAudioUrl;
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
       this.audioStopped$.next(stoppedUrl!);
       this.cleanUp();
     }
+  }
+   get isPlaying(): boolean {
+    return !!this.currentAudio;
   }
 
   private cleanUp(): void {

@@ -37,9 +37,6 @@ export class AudioInterviewComponent implements OnInit {
   currentQuestionIndex = 0;
   isCurrentlyRecording = false;
    isAudioPlaying = false;
-
-
-  
   questions = [
     "Pourriez-vous vous présenter brièvement ?",
     "Qu'est-ce qui vous motive à postuler pour ce poste ?",
@@ -52,6 +49,7 @@ export class AudioInterviewComponent implements OnInit {
   ) {}
  onRecordingStateChanged(isRecording: boolean) {
   this.isCurrentlyRecording = isRecording;
+  
   this.cdRef.detectChanges();
 }
   ngOnInit() {
@@ -60,11 +58,11 @@ export class AudioInterviewComponent implements OnInit {
     this.setupAudioPlaybackListener();
   }
    private setupAudioPlaybackListener() {
-    this.audioRecorder.getAudioPlayingState().subscribe(isPlaying => {
-      this.isAudioPlaying = isPlaying;
-      this.cdRef.detectChanges();
-    });
-  }
+  this.audioRecorder.getAudioPlayingState().subscribe(isPlaying => {
+    this.isAudioPlaying = isPlaying;
+    this.cdRef.detectChanges(); // Force la détection des changements
+  });
+}
   private setupAudioRecorder() {
     this.audioRecorder.recording$.subscribe(recording => {
       this.isRecording = recording;
@@ -173,16 +171,6 @@ export class AudioInterviewComponent implements OnInit {
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
- // Calcul du pourcentage de complétion
-get completionPercentage(): number {
-  return (this.currentQuestionIndex / this.questions.length) * 100;
-}
-
-// Nombre de questions restantes
-get remainingQuestions(): number {
-  return this.questions.length - this.currentQuestionIndex;
-}
 
 
 }

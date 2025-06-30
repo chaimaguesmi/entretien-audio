@@ -5,13 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { ClientImports } from '../../client-imports';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-interview-header',
   templateUrl: './interview-header.component.html',
   styleUrl: './interview-header.component.css',
   standalone: true,
-  imports: []
+  imports: [CommonModule]
 })
 export class InterviewHeaderComponent {
   private _jobTitle: string = '';
@@ -34,9 +35,13 @@ export class InterviewHeaderComponent {
     this._companyName = value;
     this.companyNameChange.emit(value);
   }
-    @Input() progress: number = 0;
-  @Input() currentQuestionIndex: number = 0;
+  @Input() currentQuestion: number = 0;
   @Input() totalQuestions: number = 0;
   @Output() jobTitleChange = new EventEmitter<string>();
   @Output() companyNameChange = new EventEmitter<string>();
+   getProgressPercentage(): number {
+    return this.totalQuestions > 0 
+      ? Math.round((this.currentQuestion / this.totalQuestions) * 100)
+      : 0;
+  }
 }
