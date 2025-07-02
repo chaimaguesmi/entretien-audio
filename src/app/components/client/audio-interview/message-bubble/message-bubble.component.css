@@ -1,109 +1,591 @@
-/* message-bubble.component.css */
 .message {
-  margin-bottom: 12px;
-  padding: 12px 16px;
-  border-radius: 18px;
-  max-width: 70%;
-  word-wrap: break-word;
+  max-width: 40%;
+  margin-bottom: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  animation: fadeIn 0.2s ease-out;
   position: relative;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.sender-label svg {
+  width: 20px;
+  height: 20px;
+  color: #1976d2;
+  vertical-align: middle;
 }
 
 .bot-message {
-  background-color: #e3f2fd;
+  background: rgba(255, 255, 255, 0.95);
   margin-right: auto;
-  margin-left: 0;
-  border-bottom-left-radius: 4px;
+  border-left: 2px solid #1976d2;
+  padding: 0.4rem 0.6rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(25, 118, 210, 0.3);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.user-message {
-  background-color: #bbdefb;
-  margin-left: auto;
-  margin-right: 0;
-  border-bottom-right-radius: 4px;
+.bot-message:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 24px rgba(25, 118, 210, 0.3);
+}
+
+.bot-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 20%, rgba(25, 118, 210, 0.1) 50%, transparent 80%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.bot-message:hover::before {
+  transform: translateX(100%);
 }
 
 .message-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.8em;
-  color: #555;
-}
-
-.message-content {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 0.2rem;
+  font-size: 0.65rem;
+  color: #424242;
 }
 
 .message-content p {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.3;
 }
 
-.audio-player {
+.bot-message .audio-player {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(25, 118, 210, 0.4);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
 }
 
-.play-button {
-  background: none;
+.bot-message .play-button {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
   border: none;
-  padding: 0;
   cursor: pointer;
-  color: #1976d2;
-}
-
-.play-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.progress-container {
-  flex-grow: 1;
-  height: 6px;
-  background-color: #e0e0e0;
-  border-radius: 3px;
-  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(25, 118, 210, 0.5);
   position: relative;
   overflow: hidden;
 }
 
-.progress-bar {
+.bot-message .play-button:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.7);
+  background: linear-gradient(135deg, #42a5f5, #0288d1);
+}
+
+.bot-message .play-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s ease;
+}
+
+.bot-message .play-button:active::before {
+  width: 200%;
+  height: 200%;
+  opacity: 0;
+}
+
+.bot-message .audio-player.is-playing .play-button {
+  animation: pulse 1.5s infinite, rotate 3s linear infinite;
+  background: linear-gradient(135deg, #0288d1, #42a5f5);
+  box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+}
+
+.bot-message .audio-player.is-playing .play-button::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #1976d2, #42a5f5, #0288d1, #ffffff);
+  border-radius: 50%;
+  z-index: -1;
+  animation: gradient-rotate 2.5s linear infinite;
+}
+
+.bot-message .audio-player.is-playing .sound-waves {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 2px;
+}
+
+.bot-message .audio-player.is-playing .sound-wave {
+  width: 2.5px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(25, 118, 210, 0.7);
+  animation: wave 1s ease-in-out infinite;
+}
+
+.bot-message .audio-player.is-playing .sound-wave:nth-child(1) {
+  height: 7px;
+  animation-delay: 0s;
+}
+
+.bot-message .audio-player.is-playing .sound-wave:nth-child(2) {
+  height: 10px;
+  animation-delay: 0.15s;
+}
+
+.bot-message .audio-player.is-playing .sound-wave:nth-child(3) {
+  height: 5px;
+  animation-delay: 0.3s;
+}
+
+.bot-message .audio-player.is-playing .sound-wave:nth-child(4) {
+  height: 8px;
+  animation-delay: 0.45s;
+}
+
+.bot-message .progress-container-audio {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  margin: 0 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.bot-message .progress-bar-audio {
   height: 100%;
-  background-color: #1976d2;
-  border-radius: 3px;
-  transition: width 0.1s linear;
+  background: linear-gradient(90deg, #1976d2, #42a5f5, #0288d1);
+  border-radius: 10px;
+  transition: width 0.2s ease;
+  position: relative;
+  background-size: 200% 100%;
+  animation: gradient-move 2.5s ease infinite;
 }
 
-.time-display {
-  font-size: 0.8em;
-  color: #666;
-  min-width: 80px;
-  text-align: right;
+.bot-message .progress-bar-audio::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  animation: glow 1.2s ease-in-out infinite;
 }
 
-.is-playing .play-button {
-  animation: pulse 2s infinite;
+.bot-message .audio-player.is-playing .progress-container-audio::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer-enhanced 1.8s infinite;
+}
+
+.bot-message .time-display {
+  font-size: 0.6rem;
+  min-width: 3.2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(25, 118, 210, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bot-message .audio-player.is-playing .time-display {
+  animation: time-pulse 1.8s ease-in-out infinite;
+  background: rgba(25, 118, 210, 0.3);
+  box-shadow: 0 2px 6px rgba(25, 118, 210, 0.5);
+}
+
+.user-message {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  color: white;
+  margin-left: auto;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 6px 24px rgba(25, 118, 210, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-message:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.5);
+}
+
+.user-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 20%, rgba(255, 255, 255, 0.2) 50%, transparent 80%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.user-message:hover::before {
+  transform: translateX(100%);
+}
+
+.user-message .message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  margin-bottom: 0;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-message .message-content {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.2rem;
+}
+
+.user-message .audio-player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  background: transparent;
+  border-radius: 0;
+  backdrop-filter: blur(10px);
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+.user-message .play-button {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(25, 118, 210, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-message .play-button:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.7);
+  background: linear-gradient(135deg, #42a5f5, #0288d1);
+}
+
+.user-message .play-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s ease;
+}
+
+.user-message .play-button:active::before {
+  width: 200%;
+  height: 200%;
+  opacity: 0;
+}
+
+.user-message .audio-player.is-playing .play-button {
+  animation: pulseUser 1.5s infinite, rotate 3s linear infinite;
+  background: linear-gradient(135deg, #0288d1, #42a5f5);
+  box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+}
+
+.user-message .audio-player.is-playing .play-button::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #1976d2, #42a5f5, #0288d1, #ffffff);
+  border-radius: 50%;
+  z-index: -1;
+  animation: gradient-rotate 2.5s linear infinite;
+}
+
+.user-message .audio-player.is-playing .sound-waves {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  margin-left: 0.5rem;
+  align-items: center;
+}
+
+.user-message .audio-player.is-playing .sound-wave {
+  width: 2.5px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(25, 118, 210, 0.7);
+  animation: wave 1s ease-in-out infinite;
+}
+
+.user-message .audio-player.is-playing .sound-wave:nth-child(1) {
+  height: 7px;
+  animation-delay: 0s;
+}
+
+.user-message .audio-player.is-playing .sound-wave:nth-child(2) {
+  height: 10px;
+  animation-delay: 0.15s;
+}
+
+.user-message .audio-player.is-playing .sound-wave:nth-child(3) {
+  height: 5px;
+  animation-delay: 0.3s;
+}
+
+.user-message .audio-player.is-playing .sound-wave:nth-child(4) {
+  height: 8px;
+  animation-delay: 0.45s;
+}
+
+.user-message .progress-container-audio {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  margin: 0 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.user-message .progress-bar-audio {
+  height: 100%;
+  background: linear-gradient(90deg, #1976d2, #42a5f5, #0288d1);
+  border-radius: 10px;
+  transition: width 0.2s ease;
+  position: relative;
+  background-size: 200% 100%;
+  animation: gradient-move 2.5s ease infinite;
+}
+
+.user-message .progress-bar-audio::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  animation: glow 1.2s ease-in-out infinite;
+}
+
+.user-message .audio-player.is-playing .progress-container-audio::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer-enhanced 1.8s infinite;
+}
+
+.user-message .time-display {
+  font-size: 0.6rem;
+  min-width: 3.2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(25, 118, 210, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-message .audio-player.is-playing .time-display {
+  animation: time-pulse 1.8s ease-in-out infinite;
+  background: rgba(25, 118, 210, 0.3);
+  box-shadow: 0 2px 6px rgba(25, 118, 210, 0.5);
 }
 
 @keyframes pulse {
-  0% {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
     transform: scale(1);
   }
-  50% {
-    transform: scale(1.1);
+  70% { 
+    box-shadow: 0 0 0 12px rgba(25, 118, 210, 0);
+    transform: scale(1.05);
   }
-  100% {
+  100% { 
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
     transform: scale(1);
   }
-}
-.audio-player.disabled {
-  opacity: 0.6;
-  pointer-events: none;
 }
 
-.play-button[disabled] {
-  cursor: not-allowed;
-  opacity: 0.6;
+@keyframes pulseUser {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+    transform: scale(1);
+  }
+  70% { 
+    box-shadow: 0 0 0 12px rgba(25, 118, 210, 0);
+    transform: scale(1.05);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gradient-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.6); }
+}
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 15px rgba(255, 255, 255, 1);
+    transform: scale(1.15);
+  }
+}
+
+@keyframes shimmer-enhanced {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes time-pulse {
+  0%, 100% { 
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.5);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .message {
+    max-width: 70%;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .bot-message .audio-player,
+  .user-message .audio-player {
+    gap: 0.4rem;
+    padding: 0.3rem;
+  }
+
+  .sender-label svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .bot-message .play-button,
+  .user-message .play-button {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
 }

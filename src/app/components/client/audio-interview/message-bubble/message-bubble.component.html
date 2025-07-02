@@ -1,29 +1,66 @@
+<!-- Template Angular pour les messages vocaux -->
 <div class="message" [ngClass]="{
   'bot-message': message.sender === 'bot',
   'user-message': message.sender === 'user'
 }">
 <div class="message-header">
-    <span class="sender-label">
-      {{message.sender === 'bot' ? 'Bot' : 'Vous'}}
-    </span>
-    <span class="timestamp">
-      {{message.timestamp | date:'HH:mm'}}
-    </span>
-  </div>
+  <span class="sender-label">
+  <ng-container *ngIf="message.sender === 'bot'; else userLabel">
+    <!-- Icône du bot -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+      <defs>
+        <style>.cls-1{fill:#42a5f5}</style>
+      </defs>
+      <g id="Bot_Assistant" data-name="Bot Assistant">
+        <path class="cls-1" d="M24 41a1 1 0 0 0 0 2 1 1 0 0 0 0-2z"/>
+        <path class="cls-1" d="M33.83 36H14.17a2 2 0 0 0-2 2.17L13 48h22l.82-9.83A2 2 0 0 0 33.83 36zM24 45a3 3 0 1 1 3-3 3 3 0 0 1-3 3zM11 15v10H9a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM41 17v6a2 2 0 0 1-2 2h-2V15h2a2 2 0 0 1 2 2zM32 14H16a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-13 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2zm7 4h-4a1 1 0 0 1 0-2h4a1 1 0 0 1 0 2zm3-4a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/>
+        <path d="M42.19 35.47a5 5 0 0 0-3.47-4.41l-4.16-1.33A5 5 0 0 0 38 25V15a5 5 0 0 0-4-4.9V5.22a3 3 0 1 0-4.4-.44L28.23 10h-8.46L18.4 4.78a3 3 0 1 0-4.4.44v4.88a5 5 0 0 0-4 4.9v10a5 5 0 0 0 3.44 4.73l-4.17 1.33a5 5 0 0 0-3.46 4.41L5 46.93A1 1 0 0 0 6 48h5l-.16-2H7.07l.74-10.39A3 3 0 0 1 9.88 33l8.41-2.69.74 3A1 1 0 0 0 20 34h8a1 1 0 0 0 1-.76l.74-3L38.11 33a3 3 0 0 1 2.08 2.64L40.93 46h-3.76L37 48c5.46 0 5.31.11 5.72-.32s.35.21-.53-12.21zM32 2a1 1 0 0 1 0 2 1 1 0 0 1 0-2zm-.64 3.93A3.39 3.39 0 0 0 32 6v4h-1.7zM16 2a1 1 0 0 1 0 2 1 1 0 0 1 0-2zm1.7 8H16V6a3.39 3.39 0 0 0 .64-.07zm9.52 22h-6.44l-.5-2h7.44zM15 28a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3z" style="fill:#424242"/>
+      </g>
+    </svg>
+  </ng-container>
+  <ng-template #userLabel>Vous</ng-template>
+</span>
+
+  <span class="timestamp">
+    {{message.timestamp | date:'HH:mm'}}
+  </span>
+</div>
+
+
+  
   <div class="message-content">
     <p>{{message.content}}</p>
-    <div *ngIf="message.audioUrl" class="audio-player" [class.is-playing]="isPlaying">
-      
-      <button mat-icon-button (click)="togglePlay()" class="play-button">
-        <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+    <div *ngIf="message.audioUrl" 
+         class="audio-player" 
+         [class.is-playing]="isPlaying">
+      <button (click)="togglePlay()" 
+              class="play-button" 
+              [disabled]="isRecording">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path *ngIf="!isPlaying" 
+                fill="currentColor" 
+                d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+          <path *ngIf="isPlaying" 
+                fill="currentColor" 
+                d="M14,19H18V5H14M6,19H10V5H6V19Z" />
+        </svg>
       </button>
-      
-       <div class="progress-container"  (click)="seekAudio($event)" >
-        <div class="progress-bar" [style.width.%]="progress"></div>
+      <div class="progress-container-audio" 
+           (click)="seekAudio($event)">
+        <div class="progress-bar-audio" 
+             [style.width.%]="progress">
+        </div>
       </div>
       <span class="time-display">
         {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
       </span>
+      <div *ngIf="message.sender === 'user' && isPlaying" 
+           class="sound-waves">
+        <div class="sound-wave"></div>
+        <div class="sound-wave"></div>
+        <div class="sound-wave"></div>
+        <div class="sound-wave"></div>
+      </div>
     </div>
   </div>
 </div>

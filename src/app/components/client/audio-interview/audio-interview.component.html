@@ -3,7 +3,14 @@
     [jobTitle]="currentJobTitle"
     [companyName]="currentCompanyName"
     [currentQuestion]="currentQuestionIndex"
-    [totalQuestions]="questions.length">
+    [totalQuestions]="questions.length"
+    [currentCategory]="getCurrentCategoryName()"
+    [currentCategoryIcon]="getCurrentCategoryIcon()"
+    [completedCategories]="getCompletedCategoriesCount()"
+    [totalCategories]="getTotalCategoriesCount()"
+    [currentQuestionInCategory]="getCurrentQuestionInCategory()"
+    [totalQuestionsInCategory]="getTotalQuestionsInCategory()"
+    [categories]="questionCategories">
   </app-interview-header>
 
   <app-conversation
@@ -18,6 +25,8 @@
     [isInterviewComplete]="interviewPhase === 'finished'"
     [isWaitingResponse]="isWaitingResponse"
     [isAudioPlaying]="isAudioPlaying"
+    [isRecordingAllowed]="isRecordingAllowed"
+    [isReadyToStart]="isReadyToStart" 
     (toggleRecording)="toggleRecording()"
     (startInterview)="startInterview()"
     (recordingStateChanged)="onRecordingStateChanged($event)">

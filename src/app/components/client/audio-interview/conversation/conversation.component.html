@@ -1,14 +1,16 @@
 <div class="conversation-container" #conversationContainer (scroll)="onScroll()">
-  <app-message-bubble 
-    *ngFor="let message of messages" 
-    [message]="message"
-    [isRecording]="isCurrentlyRecording"
-    (playAudio)="handlePlayAudio($event)">
-  </app-message-bubble>
+  <div class="messages-wrapper">
+    <app-message-bubble 
+      *ngFor="let message of messages" 
+      [message]="message"
+      [isRecording]="isCurrentlyRecording"
+      (playAudio)="handlePlayAudio($event)">
+    </app-message-bubble>
 
-  <div *ngIf="isWaitingResponse" class="typing-indicator">
-    <span></span>
-    <span></span>
-    <span></span>
+    <div *ngIf="isWaitingResponse" class="typing-indicator">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </div>
 </div>

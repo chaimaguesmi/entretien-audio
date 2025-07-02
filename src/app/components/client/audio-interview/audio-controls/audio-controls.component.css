@@ -2,51 +2,234 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.start-section, .end-section {
-  text-align: center;
-  width: 100%;
+.start-button {
+  position: relative;
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
-.recording-section {
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+}
+
+.start-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.start-button:hover .button-icon {
+  transform: scale(1.1);
+}
+
+.button-hover-effect {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.recording-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  width: 100%;
 }
 
-.recording-section p {
+.record-button {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
+}
+.record-button:hover:not(.disabled) {
+  transform: scale(1.05);
+}
+.record-button:active:not(.disabled) {
+  transform: scale(0.98);
+}
+.record-button.recording {
+  background: linear-gradient(135deg, #f44336 0%, #ff5252 100%);
+  animation: pulse 1.5s infinite;
+}
+.record-button.disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.pulse-effect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(244, 67, 54, 0.4);
+  animation: pulseRing 2s infinite;
+  z-index: -1;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+  70% { box-shadow: 0 0 0 16px rgba(244, 67, 54, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.8); opacity: 1; }
+  70%, 100% { transform: scale(1.4); opacity: 0; }
+}
+.voice-wave-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 50px;
+  margin-top: 1rem;
+}
+
+.voice-wave {
+  width: 6px;
+  height: var(--height, 20px);
+  background: linear-gradient(to top, #f44336, #ff8a80);
+  border-radius: 3px;
+  animation: voiceWave 1.2s infinite ease-in-out;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes voiceWave {
+  0%, 100% { height: 10px; }
+  50% { height: 30px; }
+}
+.status-message {
   margin: 0;
   color: #666;
-  font-size: 14px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-align: center;
 }
 
-button[mat-fab] {
-  width: 56px;
-  height: 56px;
-}
-
-.end-section p {
-  color: #4caf50;
+.status-message.recording {
+  color: #f44336;
   font-weight: 500;
 }
-.blue-record-button {
-  background-color: #1976d2 !important; /* Bleu Material standard */
+.end-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.blue-record-button:disabled {
-  background-color: #b0bec5 !important; /* Gris quand désactivé */
-}
-.white-text-button {
-  color: white !important;
+.success-animation {
+  position: relative;
+  margin-bottom: 0.2rem;
 }
 
-/* Si vous voulez un bleu spécifique (optionnel) */
-.white-text-button.mat-primary {
-  background-color: #1976d2; /* Bleu Material standard */
+.checkmark {
+  animation: checkmarkScale 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
+}
+
+.confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="%234CAF50"/></svg>');
+  background-repeat: no-repeat;
+  animation: confetti 1s ease-out 0.6s both;
+}
+
+.completion-message {
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+@keyframes checkmarkScale {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .controls {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .start-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .record-button {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  
+  .voice-wave {
+    width: 4px;
+  }
+}
+.start-button.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.waiting-message {
+  margin-top: 10px;
+  color: #666;
+  font-size: 0.9em;
+  text-align: center;
 }

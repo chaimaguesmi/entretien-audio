@@ -1,13 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, PLATFORM_ID } from '@angular/core';
-
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { InterviewMessage } from '../audio-interview.component';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from '../../../../app-routing.module';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
-import { ClientImports } from '../../client-imports';
 import AudioRecorderService from '../../../../core/services/audio-recorder.service';
 
 @Component({
@@ -78,29 +72,29 @@ export class MessageBubbleComponent implements OnDestroy,OnInit {
     });
   }
 
-  private startProgressTracking(): void {
-    this.stopProgressTracking();
-    
-    this.progressInterval = setInterval(() => {
-      if (this.audio) {
-        this.currentTime = this.audio.currentTime;
-        this.progress = (this.currentTime / this.duration) * 100;
-        
-        if (this.audio.ended) {
-          this.reset();
-          this.audioRecorder.notifyAudioPlaybackStopped(); 
-        }
+private startProgressTracking(): void {
+  this.stopProgressTracking();
+  
+  this.progressInterval = setInterval(() => {
+    if (this.audio) {
+      this.currentTime = this.audio.currentTime;
+      this.progress = (this.currentTime / this.duration) * 100;
+      this.cdRef.detectChanges();
+      if (this.audio.ended || this.progress >= 100) {
+        this.reset();
+        this.audioRecorder.notifyAudioPlaybackStopped();
       }
-    }, 100);
-     if (this.audio) {
+    }
+  }, 100);
+  if (this.audio) {
     this.audio.onended = () => {
       this.reset();
       this.audioRecorder.notifyAudioPlaybackStopped();
+      this.cdRef.detectChanges();
     };
   }
-  }
-
-  pause(): void {
+}
+pause(): void {
     if (!this.audio) return;
     this.audio.pause();
     this.isPlaying = false;
@@ -119,20 +113,20 @@ export class MessageBubbleComponent implements OnDestroy,OnInit {
     }
   }
 
-  private reset(): void {
-     if (!this.audio) return;
-    this.stopProgressTracking();
-    this.isPlaying = false;
-    
-    this.progress = 0;
-    this.currentTime = 0;
-    if (MessageBubbleComponent.currentlyPlaying === this) {
-      MessageBubbleComponent.currentlyPlaying = null;
-    }
-if (this.audio) {
-    this.audio.onended = null;
+private reset(): void {
+  if (!this.audio) return;
+  
+  this.stopProgressTracking();
+  this.isPlaying = false;
+  this.progress = 0;
+  this.currentTime = 0;
+  
+  if (MessageBubbleComponent.currentlyPlaying === this) {
+    MessageBubbleComponent.currentlyPlaying = null;
   }
-  }
+  
+  this.cdRef.detectChanges();
+}
 
   formatTime(seconds: number): string {
     if (isNaN(seconds)) return '0:00';
@@ -188,8 +182,6 @@ if (this.audio) {
   
 private loadAudioDuration() {
   if (!this.audio || !this.message.audioUrl) return;
-  
-  // Sauvegarde l'état actuel
   const wasPlaying = this.isPlaying;
   const currentTime = this.audio.currentTime;
   
@@ -204,8 +196,6 @@ private loadAudioDuration() {
     this.duration = this.audio!.duration;
     this.durationLoaded = true;
     this.cdRef.detectChanges();
-    
-    // Restaure l'état précédent
     if (wasPlaying) {
       this.audio!.src = this.message.audioUrl!;
       this.audio!.currentTime = currentTime;

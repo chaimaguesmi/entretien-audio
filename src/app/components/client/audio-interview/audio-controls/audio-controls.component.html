@@ -1,21 +1,48 @@
 <div class="controls">
   <div *ngIf="!interviewStarted" class="start-section">
-    <button mat-raised-button color="primary" class="white-text-button" (click)="startInterview.emit()">
-      Commencer l'entretien
+    <button class="start-button" (click)="startInterview.emit()"  [disabled]="!isReadyToStart">
+      <svg width="20" height="20" viewBox="0 0 24 24" class="button-icon">
+        <path fill="currentColor" d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M8,16V8L16,12L8,16Z" />
+      </svg>
+      <span class="button-label">Commencer l'entretien</span>
+      <span class="button-hover-effect"></span>
     </button>
   </div>
 
   <div *ngIf="interviewStarted && !isInterviewComplete" class="recording-section">
-    <button mat-fab class="blue-record-button" 
-            (click)="onToggleRecording()" 
-            [disabled]="isAudioPlaying || isWaitingResponse">
-      <mat-icon *ngIf="!isRecording">mic</mat-icon>
-      <mat-icon *ngIf="isRecording">stop</mat-icon>
-    </button>
-    <p>{{ isRecording ? 'Enregistrement en cours...' : 'Appuyez pour enregistrer' }}</p>
+    <div class="recording-wrapper">
+      <button class="record-button" 
+              [class.recording]="isRecording"
+              [class.disabled]="!isRecordingAllowed || isAudioPlaying || isWaitingResponse"
+              (click)="onToggleRecording()" 
+              [disabled]="isAudioPlaying || isWaitingResponse">
+        <svg width="24" height="24" viewBox="0 0 24 24" class="record-icon">
+          <path *ngIf="!isRecording" fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+          <path *ngIf="isRecording" fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11H17A5,5 0 0,1 12,16A5,5 0 0,1 7,11H5C5,16 9.13,20 12,20C14.87,20 19,16 19,11Z" />
+        </svg>
+        <span class="pulse-effect" *ngIf="isRecording"></span>
+      </button>
+      
+      <div class="voice-wave-container" *ngIf="isRecording">
+        <div class="voice-wave" *ngFor="let bar of [1,2,3,4,5,6,7,8]; let i = index" 
+             [style.--delay]="i*0.1+'s'"
+             [style.--height]="getRandomHeight(i)+'px'">
+        </div>
+      </div>
+    </div>
+    
+    <p class="status-message" [class.recording]="isRecording">
+      {{ isRecording ? 'Enregistrement en cours...' : 'Appuyez pour répondre' }}
+    </p>
   </div>
 
   <div *ngIf="isInterviewComplete" class="end-section">
-    <p>L'entretien est terminé. Merci !</p>
+    <div class="success-animation">
+      <svg width="48" height="48" viewBox="0 0 24 24" class="checkmark">
+        <path fill="#4CAF50" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" />
+      </svg>
+      <div class="confetti"></div>
+    </div>
+    <p class="completion-message">L'entretien est terminé. Merci !</p>
   </div>
 </div>

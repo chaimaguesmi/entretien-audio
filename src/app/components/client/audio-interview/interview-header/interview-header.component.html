@@ -1,5 +1,34 @@
- <div class="header">
-      <h1>Entretien Audio</h1>
-      <p>Poste: {{ jobTitle }} - {{ companyName }}</p>
+<div class="header" aria-label="Interview Header">
+  <div class="header-content">
+    <h1 class="title">Entretien Audio</h1>
+    <p class="subtitle">Poste: {{ jobTitle }} - {{ companyName }}</p>
+  </div>
+  
+  <div class="progress-container" *ngIf="totalCategories > 0">
+    <div class="category-info">
+  </div>
+  <div class="current-category-progress" *ngIf="currentCategory && totalQuestionsInCategory > 0">
+    <div class="category-question-info">
+      <span class="question-counter">
+        Question {{ currentQuestionInCategory }}/{{ totalQuestionsInCategory }} 
+      </span>
+      <span class="question-percentage">{{ getCurrentCategoryProgressPercentage() }}%</span>
     </div>
     
+    <div class="progress-bar current-category-bar">
+      <div class="progress-fill category-fill" 
+           [style.width.%]="getCurrentCategoryProgressPercentage()"></div>
+      </div>
+    </div>
+    <div class="category-steps">
+      <div *ngFor="let category of categories; let i = index" 
+           class="category-step" 
+           [class.completed]="category.completed"
+           [class.current]="i === (completedCategories)"
+           [title]="category.name">
+        <span class="step-icon">{{ category.icon }}</span>
+        <span class="step-name">{{ category.name }}</span>
+      </div>
+    </div>
+  </div>
+</div>
